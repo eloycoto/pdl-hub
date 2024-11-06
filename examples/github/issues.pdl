@@ -1,0 +1,37 @@
+description: "Cilium issues filtering"
+text:
+  - lang: python
+    code: |
+        import issues
+        import json
+        content = issues.fetch_open_issues("cilium", "cilium")
+        result = json.dumps(content, indent=2)
+    def: GITHUB_ISSUES
+
+  - lang: python
+    code: |
+        from datetime import datetime
+        result = datetime.now().strftime("%A, %Y-%m-%d")
+    def: TODAY
+
+  - "The number of issues are ${GITHUB_ISSUES}"
+
+  - model: openai/llama3.1:8b
+    parameters:
+        temperature: 0.3
+    input: |
+      The following json contains a list of the issues that I have open:
+      ```json
+      ${ GITHUB_ISSUES }
+      ```
+      Today is: ${ TODAY }
+
+      Based on this information I need the following information:
+
+      1) A list of the new issues from 7 days ago:
+      2) The list of issues that you'll consider a security risk.
+      3) The issues that are related to user experince.
+      4) The issues which are part of the Continious integration process.
+
+      Rules:
+      - If there is no information about any topic, please say, no information.

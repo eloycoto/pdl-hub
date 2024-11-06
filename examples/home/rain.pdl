@@ -1,0 +1,30 @@
+description: "It'll rain?"
+text:
+
+  - lang: python
+    code: |
+      import requests
+      import html2text
+      response = requests.get('https://www.aemet.es/xml/municipios/localidad_28079.xml')
+      result = response.content
+    def: WEATHER
+
+  - lang: python
+    code: |
+        from datetime import datetime
+        result = datetime.now().strftime("%A, %Y-%m-%d")
+    def: TODAY
+
+  - model: openai/llama3.1:8b
+    parameters:
+        temperature: 0.3
+    input: |
+      Based on the following xml, which contains the wheather forecast, is going to rain today?
+      ```xml
+      ${ WEATHER }
+      ```
+      Today is: ${ TODAY }
+      Based on this, reply with this format:
+
+      Today: Rain: RAINFORCAST, humidity: HUMIDITYLEVEL%
+      Tomorrow: Rain: TOMORROW_RAINFORCAST, humidity: TOMORROW_HUMIDITYLEVEL%

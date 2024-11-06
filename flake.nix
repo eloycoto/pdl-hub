@@ -23,6 +23,7 @@
             ipython
             ipdb
             flask
+            html2text
           ];
         in
         with pkgs;

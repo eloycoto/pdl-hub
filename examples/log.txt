@@ -1,0 +1,10 @@
+**********  pdl_context  **********
+[{'role': 'user', 'content': 'import os\nprint(os.getcwd())\nimport issues\nimport json\ncontent = issues.fetch_open_issues("cilium", "cilium")\nresult = json.dumps(content, indent=2)\n'}]
+**********  Code Input  **********
+import os
+print(os.getcwd())
+import issues
+import json
+content = issues.fetch_open_issues("cilium", "cilium")
+result = json.dumps(content, indent=2)
+

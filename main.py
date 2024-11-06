@@ -2,11 +2,13 @@ import logging
 import os
 import sys
 import time
+import subprocess
+import json
 
 from dataclasses import dataclass
 from flask import Flask, jsonify, request
 from pathlib import Path
-from pdl.pdl import exec_file
+# from pdl.pdl import exec_file
 from typing import List
 
 logging.basicConfig(
@@ -27,6 +29,10 @@ class PDLScript:
     @property
     def absolute_path(self):
         return os.path.join(self.root_dir, self.filename)
+
+    @property
+    def pythonPath(self):
+        return {"PYTHONPATH": os.path.dirname(self.absolute_path)}
 
     def route_path(self) -> str:
         return '/' + self.filename.replace('.pdl', '')
@@ -66,11 +72,21 @@ def find_pdl_files(root_dir: str) -> List[PDLScript]:
 def http_handler(path: PDLScript):
     start_time = time.time()
     data = request.get_json(force=True)
-
-    result = exec_file(path.absolute_path, scope=data)
+    result = subprocess.run(
+        [
+            "pdl",
+            "-d",
+            json.dumps(data),
+            path.absolute_path,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env={**os.environ, **path.pythonPath}
+    )
     return {
         "time": time.time() - start_time,
-        "result": result
+        "result": result.stdout
     }
 
 
