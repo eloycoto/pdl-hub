@@ -1,0 +1,33 @@
+description: "Summarize the given url"
+defs:
+  getMarkdownFromURL:
+    function:
+      url: str
+    return:
+    - lang: python
+      code: |
+        import requests
+        import html2text
+        response = requests.get('${url}')
+        result = html2text.html2text(str(response.content))
+text:
+  - call: getMarkdownFromURL
+    contribute: []
+    def: markdownText
+    args:
+      url: "${url}"
+
+  - model: openai/llama3.1:8b
+    parameters:
+        temperature: 0.3
+    input: |
+      array:
+      - role: system
+        content: |
+          You are an expert at summarizing documents, including Markdown files, into clear, concise summaries that retain essential information. Focus on identifying and explaining the main points, sections, and important highlights in a way that is easy to understand. Maintain a neutral and objective tone. If the Markdown file contains structural elements (e.g., headings, lists), retain this structure in the summary to enhance readability and clarity.
+      - role: user
+        content: |
+          Read the contents of the provided Markdown file. Summarize its main points, sections, and any significant details concisely, while maintaining clarity and readability. The summary should capture the core information without extraneous detail, making it easy for someone unfamiliar with the original document to understand its purpose and key messages. If the Markdown file includes headings, subheadings, or bullet points, please reflect the structure in your summary as much as possible
+          ```md
+          ${ markdownText }
+          ```

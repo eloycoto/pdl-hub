@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "pdl-hub"
+version = "0.1.0"
+description = "PDL Hub Service"
+authors = ["Eloy Coto <eloycoto@acalustra.com>"]
+readme = "README.md"
+packages = [{include = "pdl_hub", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.0.3"
+prompt-declaration-language = "^0.0.8"
+html2text = "^2024.2.26"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+flake8 = "^6.0.0"
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+pdl-hub = "pdl_hub.app:main"

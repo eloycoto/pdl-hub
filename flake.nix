@@ -13,31 +13,26 @@
             inherit system;
             overlays = [eloy.overlays.default];
           };
-          python-packages = ps: with ps; [
-            flake8
-            # pyyaml
-            # pydantic
-            # litellm
-            termcolor
-            build
-            ipython
-            ipdb
-            flask
-            html2text
-          ];
         in
         with pkgs;
         {
           devShells.default = mkShell {
             buildInputs = [
-              (pkgs.python3.withPackages python-packages)
               pkgs.gnumake
+              pkgs.stdenv.cc.cc.lib
+              pkgs.gcc
+              pkgs.libstdcxx5
               pyright
               pkgs.direnv
               pkgs.ruff
-              pkgs.python3Packages.prompt-declaration-language
+              pkgs.poetry
             ];
-
+            shellHook = ''
+              export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [
+                pkgs.stdenv.cc.cc
+                pkgs.libstdcxx5
+              ]}
+            '';
           };
         }
       );
