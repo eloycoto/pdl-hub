@@ -12,8 +12,12 @@ class PDLScript:
         return os.path.join(self.root_dir, self.filename)
 
     @property
+    def directory_path(self):
+        return os.path.dirname(self.absolute_path)
+
+    @property
     def pythonPath(self):
-        return {"PYTHONPATH": os.path.dirname(self.absolute_path)}
+        return {"PYTHONPATH": self.directory_path}
 
     def route_path(self) -> str:
         return '/' + self.filename.replace('.pdl', '')

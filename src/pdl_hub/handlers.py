@@ -2,15 +2,17 @@ import time
 import logging
 from flask import jsonify, request
 from typing import List
-from pdl.pdl import exec_file
+from pdl.pdl import exec_file, InterpreterConfig
 from .models import PDLScript
 
 
 def http_handler(path: PDLScript):
     start_time = time.time()
     data = request.get_json(force=True)
-
-    result = exec_file(path.absolute_path, scope=data)
+    result = exec_file(
+        path.absolute_path,
+        scope=data,
+        config=InterpreterConfig(cwd=path.directory_path))
     return {
         "time": time.time() - start_time,
         "result": result
